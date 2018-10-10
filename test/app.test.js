@@ -64,3 +64,50 @@ describe('GET /api/todos', () => {
             })
     })
 })
+
+describe('GET /api/todos/:id', () => {
+    test('should get a single todo by id', done => {
+        const text = 'single todo'
+
+        new Todo({ text }).save().then(doc => {
+            const _id = doc._id
+
+            request(app)
+                .get('/api/todos/' + _id)
+                .expect(200)
+                .end((err, res) => {
+                    if (err) return done(err)
+                    Todo.findOne({ _id }).then(doc => {
+                        expect(doc.text).toBe(text)
+                        done()
+                    })
+                    done()
+                })
+        })
+    })
+})
+
+describe('DELETE /api/todos/:id', () => {
+    test('should delete single todo by id', done => {
+        const text = 'single todo for delete'
+
+        // Create a new todo
+        new Todo({ text }).save().then(doc => {
+            // Grab newly created todo's objectId
+            const _id = doc._id
+
+            // Delete that todo
+            Todo.deleteOne({ _id }).then(deleted => {
+                request(app)
+                    .get('/api/todos/' + _id)
+                    .expect(200)
+                    .end((err, res) => {
+                        // expect for now doc for that objectID
+                        expect(res.body).toEqual({})
+                    })
+            })
+
+            done()
+        })
+    })
+})

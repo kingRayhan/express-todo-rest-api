@@ -10,6 +10,8 @@ app.use(bodyParser.json())
 const TodoController = require('./controllers/todosController')
 
 app.get('/api/todos', TodoController.index)
-app.post('/api/todos', TodoController.create)
+app.get('/api/todos/:id', TodoController.show)
+app.post('/api/todos', TodoController.store)
+app.delete('/api/todos/:id', TodoController.destroy)
 
 module.exports = app
